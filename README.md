@@ -1,2 +1,2 @@
 # leet-jvm
-LeetCode excersises (tests, solutions in java and groovy)
+LeetCode exercises (tests, solutions in java and groovy)

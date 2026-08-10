@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>net.novaware.leet</groupId>
+    <artifactId>leet-jvm</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <java.version>25</java.version>
+        <toolchain.jdk.version>[25, 26)</toolchain.jdk.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <gmaven-plus.version>4.2.1</gmaven-plus.version>
+        <groovy.version>4.0.29</groovy.version>
+        <spock.version>2.4-groovy-4.0</spock.version>
+        <junit.version>5.14.1</junit.version>
+        <byte-buddy.version>1.18.1</byte-buddy.version>
+        <objenesis.version>3.4</objenesis.version>
+        <hamcrest.version>3.0</hamcrest.version>
+        <surefire.version>3.5.3</surefire.version>
+        <toolchains.version>3.2.0</toolchains.version>
+        <jspecify.version>1.0.0</jspecify.version>
+        <compiler.version>3.15.0</compiler.version>
+        <modernizer.version>3.2.0</modernizer.version>
+    </properties>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency> <!-- spock jar versions -->
+                <groupId>org.spockframework</groupId>
+                <artifactId>spock-bom</artifactId>
+                <version>${spock.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency> <!-- universal nullness annotations -->
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
+            <version>${jspecify.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency> <!-- testing with groovy / spock -->
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>${groovy.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency> <!-- base spock dep -->
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency> <!-- mocking of classes (in addition to interfaces) -->
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>${byte-buddy.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency> <!-- mocking of classes without default constructor (together with ByteBuddy or CGLIB) -->
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>${objenesis.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency> <!-- matchers for tests -->
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>${hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <version>${toolchains.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>select-jdk-toolchain</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId> <!-- see also checker profile -->
+                <version>${compiler.version}</version>
+                <configuration>
+                    <fork>true</fork>
+                    <compilerArgs>
+                        <arg>-Xpkginfo:always</arg><!-- prevents recompile -->
+                        <arg>-g:lines,vars,source</arg>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <plugin> <!-- compilation of tests in groovy -->
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>${gmaven-plus.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compileTests</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <invokeDynamic>true</invokeDynamic>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.version}</version>
+                <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <includes>
+                        <include>**/*Test</include>
+                        <include>**/*Spec</include>
+                        <include>**/*CT</include>
+                    </includes>
+                    <!-- support for @DisplayName in junit5 -->
+                    <statelessTestsetReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
+                        <disable>false</disable>
+                        <version>3.0</version>
+                        <usePhrasedFileName>false</usePhrasedFileName>
+                        <usePhrasedTestSuiteClassName>true</usePhrasedTestSuiteClassName>
+                        <usePhrasedTestCaseClassName>true</usePhrasedTestCaseClassName>
+                        <usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
+                    </statelessTestsetReporter>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.gaul</groupId>
+                <artifactId>modernizer-maven-plugin</artifactId>
+                <version>${modernizer.version}</version>
+                <configuration>
+                    <javaVersion>25</javaVersion>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>modernizer</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>modernizer</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

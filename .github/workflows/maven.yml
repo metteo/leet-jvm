@@ -1,0 +1,22 @@
+name: leet-jvm
+
+on: [push]
+
+jobs:
+  verify:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: git
+        uses: actions/checkout@v5
+
+      - name: java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: maven
+        run: mvn --batch-mode --update-snapshots clean verify
