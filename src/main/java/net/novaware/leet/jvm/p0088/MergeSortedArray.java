@@ -1,7 +1,5 @@
 package net.novaware.leet.jvm.p0088;
 
-import java.util.Arrays;
-
 /**
  * #88 Merge Sorted Array
  *
@@ -20,7 +18,7 @@ public class MergeSortedArray {
             assert nums2.length == n;
             assert 0 <= m;
             assert n <= 200;
-            assert 1 <= m + n & m + n <= 200;
+            assert 1 <= m + n && m + n <= 200;
 
             int[] nums3 = nums1;
 
