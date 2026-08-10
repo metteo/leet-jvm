@@ -6,6 +6,6 @@ class MainSpec extends Specification {
 
     def "should print"() {
         expect:
-        println "Hello test!"
+        println "Hello spock!"
     }
 }

@@ -61,7 +61,6 @@
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
             <version>${groovy.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency> <!-- base spock dep -->
@@ -124,6 +123,7 @@
                 <executions>
                     <execution>
                         <goals>
+                            <goal>compile</goal>
                             <goal>compileTests</goal>
                         </goals>
                     </execution>
