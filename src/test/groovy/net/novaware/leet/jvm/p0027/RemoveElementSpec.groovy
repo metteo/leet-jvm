@@ -6,10 +6,10 @@ class RemoveElementSpec extends Specification {
 
     def "should pass test cases"() {
         given:
-        int[] nums = numsIn;
+        int[] nums = numsIn as int[] // keep reference for then block
 
         when:
-        def result = new RemoveElement.Solution().removeElement(nums as int[], val)
+        def result = new RemoveElement.Solution().removeElement(nums, val)
 
         then:
         result == res
@@ -17,6 +17,9 @@ class RemoveElementSpec extends Specification {
 
         where:
         numsIn                   | val || res | numsOut
+        []                       | 0   || 0   | []
+        [1]                      | 1   || 0   | []
+        [1]                      | 2   || 1   | [1]
         [3, 2, 2, 3]             | 3   || 2   | [2, 2]
         [0, 1, 2, 2, 3, 0, 4, 2] | 2   || 5   | [0, 1, 4, 0, 3]
     }
